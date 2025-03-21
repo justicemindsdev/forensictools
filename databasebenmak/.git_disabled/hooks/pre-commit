@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Check for credentials in staged changes
+git diff --cached | grep -E "(API_KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL)\s*=\s*[\"'][^\"']+[\"']" > /dev/null
+if [ $? -eq 0 ]; then
+    echo "ERROR: Credential found in staged changes"
+    echo "Please move credentials to .env file"
+    exit 1
+fi
+
+# Check for .env files
+git diff --cached --name-only | grep "\.env" > /dev/null
+if [ $? -eq 0 ]; then
+    echo "ERROR: Attempting to commit .env file"
+    exit 1
+fi
+
+# Run credential monitoring
+./monitor_credentials.sh
+exit $?
