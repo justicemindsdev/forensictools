@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Justice Minds - Digital Evidence Analyzer</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#1a508b',
+                            dark: '#0d2d4e',
+                            light: '#2c6bb1'
+                        },
+                        secondary: {
+                            DEFAULT: '#646464',
+                            dark: '#424242',
+                            light: '#888888'
+                        },
+                        justice: {
+                            dark: '#1c1c28',
+                            DEFAULT: '#232336',
+                            light: '#2d2d45',
+                            accent: '#3f3f5f'
+                        }
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <!-- CSS Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body class="bg-justice-dark text-gray-100 min-h-screen">
+    <header class="bg-justice py-4 border-b border-justice-accent shadow-lg header-border">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="flex flex-col">
+                    <h1 class="text-2xl font-bold auth-text-shadow text-white">JUSTICE MINDS FORENSICS INTELLIGENCE</h1>
+                    <span class="text-xs text-gray-400">DIGITAL EVIDENCE MANAGEMENT SYSTEM</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="text-right">
+                    <div class="text-sm font-medium">CASE: #JM-<span id="case-id">24051988</span></div>
+                    <div class="text-xs text-gray-400" id="timestamp-display"></div>
+                </div>
+                <div class="official-stamp">AUTHENTICATED</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <div class="bg-justice rounded-lg shadow-lg overflow-hidden mb-6">
+            <div class="flex items-center border-b border-justice-accent">
+                <button class="nav-tab py-3 px-6 font-medium flex items-center space-x-2 text-white bg-justice-accent" data-tab="chat">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    <span>Chat Analysis</span>
+                </button>
+                <button class="nav-tab py-3 px-6 font-medium flex items-center space-x-2 text-gray-400 hover:text-white" data-tab="evidence">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>Evidence Management</span>
+                </button>
+                <button class="nav-tab py-3 px-6 font-medium flex items-center space-x-2 text-gray-400 hover:text-white" data-tab="media">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Media Gallery</span>
+                </button>
+                <button class="nav-tab py-3 px-6 font-medium flex items-center space-x-2 text-gray-400 hover:text-white" data-tab="ai">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    <span>AI Analysis</span>
+                </button>
+            </div>
+            
+            <div class="tab-content" id="chat-tab">
+                <div class="p-6">
+                    <div class="mb-6">
+                        <div class="bg-justice-light rounded-lg p-6 shadow-inner gov-panel">
+                            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                Upload Chat Evidence
+                            </h2>
+                            <div class="flex flex-col md:flex-row gap-4">
+                                <div class="flex-1">
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                                        Select WhatsApp chat file or zip archive
+                                    </label>
+                                    <input type="file" id="file-input" class="block w-full text-base border border-justice-accent rounded-md focus:outline-none focus:ring-primary focus:border-primary cursor-pointer
+                                        file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-primary file:text-white
+                                        hover:file:bg-primary-dark bg-justice p-1.5" accept=".txt,.zip">
+                                </div>
+                                <div class="flex items-end">
+                                    <button id="analyze-btn" class="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-6 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed h-10 flex items-center" disabled>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                        </svg>
+                                        Process Evidence
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 border-t border-justice-accent pt-4">
+                                <label class="block text-sm font-medium text-gray-300 mb-2">
+                                    Upload Media Files (Optional)
+                                </label>
+                                <p class="text-xs text-gray-400 mb-2">Upload media files to integrate with chat timeline using metadata</p>
+                                <input type="file" id="timeline-media-input" class="block w-full text-base border border-justice-accent rounded-md focus:outline-none focus:ring-primary focus:border-primary cursor-pointer
+                                    file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-primary file:text-white
+                                    hover:file:bg-primary-dark bg-justice p-1.5" accept="image/*,video/*" multiple>
+                            </div>
+                            
+                            <div id="upload-info" class="mt-4 text-sm text-gray-400 hidden"></div>
+                        </div>
+                    </div>
+
+                    <div id="loading" class="flex flex-col items-center justify-center py-10 hidden">
+                        <div class="loading-spinner mb-4"></div>
+                        <p id="loading-text" class="text-gray-400">Processing digital evidence...</p>
+                    </div>
+
+                    <div id="results-container" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 hidden">
+                        <div class="lg:col-span-2">
+                            <div class="bg-justice-light rounded-lg p-6 shadow-inner h-full gov-panel">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="flex items-center">
+                                        <h2 class="text-xl font-semibold mr-4">Chat Message Transcript</h2>
+                                        <button id="reset-filter" class="text-xs bg-justice-accent hover:bg-justice rounded px-2 py-1 hidden">
+                                            Show All Messages
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex items-center gap-2 mr-2">
+                                            <span class="text-sm text-gray-400">Show Media:</span>
+                                            <label class="inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" id="show-media-inline" class="sr-only peer">
+                                                <div class="relative w-10 h-5 bg-justice-accent rounded-full peer peer-checked:bg-primary-dark peer-focus:outline-none">
+                                                    <div class="absolute w-4 h-4 bg-white rounded-full left-0.5 top-0.5 transition-all duration-300 transform peer-checked:translate-x-5"></div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <input type="text" id="message-search" placeholder="Search messages..." class="px-3 py-1 border border-justice-accent bg-justice rounded-md text-base focus:outline-none focus:ring-1 focus:ring-primary">
+                                        <select id="message-filter" class="px-3 py-1 border border-justice-accent bg-justice rounded-md text-base focus:outline-none focus:ring-1 focus:ring-primary">
+                                            <option value="all">All Messages</option>
+                                            <option value="questions">Questions</option>
+                                            <option value="phrases">Common Phrases</option>
+                                            <option value="media">Media Files</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table id="message-table" class="w-full text-left">
+                                        <thead>
+                                            <tr class="bg-justice-accent">
+                                                <th class="py-2 px-3 w-32 text-sm font-medium">EVIDENCE ID</th>
+                                                <th class="py-2 px-3 w-44 text-sm font-medium">TIMESTAMP</th>
+                                                <th class="py-2 px-3 w-32 text-sm font-medium">SOURCE</th>
+                                                <th class="py-2 px-3 text-sm font-medium">CONTENT</th>
+                                                <th class="py-2 px-3 w-24 text-sm font-medium">ACTIONS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="messages-container">
+                                            <!-- Messages will be inserted here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="flex justify-between items-center mt-4">
+                                    <div>
+                                        <span id="message-count" class="text-sm text-gray-400">0 messages</span>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button id="prev-page" class="px-3 py-1 bg-justice-accent rounded-md text-sm disabled:opacity-50">Previous</button>
+                                        <span id="page-info" class="text-sm text-gray-400 self-center">Page 1</span>
+                                        <button id="next-page" class="px-3 py-1 bg-justice-accent rounded-md text-sm disabled:opacity-50">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stats-container">
+                            <div class="bg-justice-light rounded-lg p-6 shadow-inner mb-6 gov-panel">
+                                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    </svg>
+                                    Evidence Statistics
+                                </h2>
+                                <div id="stats-basic" class="grid grid-cols-2 gap-4 mb-6">
+                                    <div class="bg-justice p-4 rounded-md shadow-sm">
+                                        <p class="text-sm text-gray-400">Total Messages</p>
+                                        <p id="total-messages" class="text-2xl font-semibold">0</p>
+                                    </div>
+                                    <div class="bg-justice p-4 rounded-md shadow-sm">
+                                        <p class="text-sm text-gray-400">Total Words</p>
+                                        <p id="total-words" class="text-2xl font-semibold">0</p>
+                                    </div>
+                                    <div class="bg-justice p-4 rounded-md shadow-sm">
+                                        <p class="text-sm text-gray-400">Evidentiary Period</p>
+                                        <p id="active-days" class="text-2xl font-semibold">0 days</p>
+                                    </div>
+                                    <div class="bg-justice p-4 rounded-md shadow-sm">
+                                        <p class="text-sm text-gray-400">Media Exhibits</p>
+                                        <p id="media-count" class="text-2xl font-semibold">0</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-lg mb-2 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                        </svg>
+                                        Subjects
+                                    </h3>
+                                    <div id="participants-list" class="text-sm space-y-2">
+                                        <!-- Participants will be inserted here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-justice-light rounded-lg p-6 shadow-inner mb-6 gov-panel">
+                                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                                    </svg>
+                                    Linguistic Analysis
+                                </h2>
+                                <p class="text-sm text-gray-400 mb-4">Most frequently used terms (excluding common words)</p>
+                                <div class="h-64">
+                                    <canvas id="word-freq-chart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="bg-justice-light rounded-lg p-6 shadow-inner">
+                                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path>
+                                    </svg>
+                                    Pattern Recognition
+                                </h2>
+                                <div class="space-y-3">
+                                    <div>
+                                        <h3 class="font-medium mb-1">Affirmative Statements</h3>
+                                        <p id="love-count" class="text-sm text-gray-400">0 instances found</p>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-medium mb-1">Interrogative Statements</h3>
+                                        <p id="question-count" class="text-sm text-gray-400">0 questions found</p>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-medium mb-1">Response Rate Analysis</h3>
+                                        <p id="response-rate" class="text-sm text-gray-400">0% of questions received responses</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content hidden" id="evidence-tab">
+                <div class="p-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-justice-light rounded-lg p-6 shadow-inner">
+                            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                                Claims
+                            </h2>
+                            <div class="space-y-4">
+                                <div class="bg-justice p-4 rounded-md">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="font-medium">Claim #1</h3>
+                                        <span class="badge badge-blue">Active</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-300">The subject expressed intention to meet at location "Porchester Square" on multiple occasions.</p>
+                                    <div class="mt-3 flex justify-between text-xs text-gray-400">
+                                        <span>REFERENCE: JM-E2201, JM-E2205</span>
+                                        <button class="text-primary hover:text-primary-light" onclick="highlightEvidence(['JM-E2201', 'JM-E2205'])">Show Evidence</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-justice p-4 rounded-md">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="font-medium">Claim #2</h3>
+                                        <span class="badge badge-green">Verified</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-300">Communication was end-to-end encrypted as stated in the header of the chat logs.</p>
+                                    <div class="mt-3 flex justify-between text-xs text-gray-400">
+                                        <span>REFERENCE: JM-E2200</span>
+                                        <button class="text-primary hover:text-primary-light" onclick="highlightEvidence(['JM-E2200'])">Show Evidence</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-justice p-4 rounded-md">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="font-medium">Claim #3</h3>
+                                        <span class="badge badge-yellow">Under Review</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-300">Subject "James" requested unauthorized access to a secured location.</p>
+                                    <div class="mt-3 flex justify-between text-xs text-gray-400">
+                                        <span>REFERENCE: JM-E2208</span>
+                                        <button class="text-primary hover:text-primary-light" onclick="highlightEvidence(['JM-E2208'])">Show Evidence</button>
+                                    </div>
+                                </div>
+                                
+                                <button id="add-claim-btn" class="w-full py-2 mt-2 bg-justice-accent hover:bg-justice rounded-md text-sm text-gray-300 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    Add New Claim
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-justice-light rounded-lg p-6 shadow-inner">
+                            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                                Evidence
+                            </h2>
+                            <div id="evidence-list" class="space-y-4">
+                                <div class="evidence-container bg-justice p-4 pl-6 rounded-md" id="evidence-JM-E2200">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="font-medium">Evidence ID: JM-E2200</h3>
+                                        <span class="badge badge-green">Header</span>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-300">Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to them.</p>
+                                    <div class="mt-3 text-xs text-gray-400">
+                                        <span>TIMESTAMP: 2018-11-19 10:03:06</span>
+                                    </div>
+                                </div>
