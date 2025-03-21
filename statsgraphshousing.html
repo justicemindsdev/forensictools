@@ -1,0 +1,923 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UK Housing Stats Dashboard</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        
+        .tab:hover:not(.active) {
+            background-color: #f1f1f1;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        
+        .card-header h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .stat-comparison {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .trend-up {
+            color: var(--danger);
+        }
+        
+        .trend-down {
+            color: var(--success);
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-bottom: 30px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .data-table tr:hover {
+            background-color: #f5f7fa;
+        }
+        
+        .highlight {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--secondary);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .source-list {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 30px;
+        }
+        
+        .source-list h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+        
+        .badge-danger {
+            background-color: #fceaea;
+            color: var(--danger);
+        }
+        
+        .badge-warning {
+            background-color: #fef5e7;
+            color: var(--warning);
+        }
+        
+        .badge-success {
+            background-color: #e8f8f0;
+            color: var(--success);
+        }
+        
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .flex-column {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-50 {
+            flex: 1 1 calc(50% - 20px);
+            min-width: 300px;
+        }
+        
+        /* Custom chart styling */
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .bar-chart-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .bar-chart-label {
+            width: 180px;
+            font-size: 0.9rem;
+        }
+        
+        .bar-chart-bar-container {
+            flex-grow: 1;
+            background-color: #f1f1f1;
+            height: 25px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .bar-chart-bar {
+            height: 100%;
+            background-color: var(--secondary);
+            transition: width 1s ease-in-out;
+        }
+        
+        .bar-chart-value {
+            margin-left: 10px;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: right;
+        }
+        
+        .donut-chart {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+        }
+        
+        .donut-segment {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            clip: rect(0, 180px, 180px, 90px);
+        }
+        
+        .pie-stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .pie-stat {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .pie-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-50 {
+                flex: 1 1 100%;
+            }
+            
+            .tab {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>UK Housing Crisis Dashboard</h1>
+            <p>Analysis of evictions, housing conditions, and tenant rights in the UK rental market</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="openTab(event, 'evictions')">Evictions</div>
+            <div class="tab" onclick="openTab(event, 'housing-conditions')">Housing Conditions</div>
+            <div class="tab" onclick="openTab(event, 'smoking')">Smoking &amp; Housing</div>
+            <div class="tab" onclick="openTab(event, 'harassment')">Harassment</div>
+            <div class="tab" onclick="openTab(event, 'legislation')">Legislation</div>
+        </div>
+        
+        <!-- EVICTIONS TAB -->
+        <div id="evictions" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <h2>No-Fault Evictions Crisis</h2>
+                </div>
+                
+                <div class="highlight">
+                    <p><strong>2,682</strong> households in England were forcibly evicted by bailiffs due to Section 21 no-fault evictions between January and March 2024 - a 19% increase in a year and the highest in six years.</p>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Section 21 Bailiff Evictions by Year</h3>
+                    <div class="bar-chart">
+                        <div class="bar-chart-item">
+                            <div class="bar-chart-label">2019 (excl. Q1)</div>
+                            <div class="bar-chart-bar-container">
+                                <div class="bar-chart-bar" style="width: 61%;"></div>
+                            </div>
+                            <div class="bar-chart-value">5,807</div>
+                        </div>
+                        <div class="bar-chart-item">
+                            <div class="bar-chart-label">2020</div>
+                            <div class="bar-chart-bar-container">
+                                <div class="bar-chart-bar" style="width: 19%; background-color: #f39c12;"></div>
+                            </div>
+                            <div class="bar-chart-value">1,829</div>
+                        </div>
+                        <div class="bar-chart-item">
+                            <div class="bar-chart-label">2021</div>
+                            <div class="bar-chart-bar-container">
+                                <div class="bar-chart-bar" style="width: 30%; background-color: #f39c12;"></div>
+                            </div>
+                            <div class="bar-chart-value">2,879</div>
+                        </div>
+                        <div class="bar-chart-item">
+                            <div class="bar-chart-label">2022</div>
+                            <div class="bar-chart-bar-container">
+                                <div class="bar-chart-bar" style="width: 67%;"></div>
+                            </div>
+                            <div class="bar-chart-value">6,339</div>
+                        </div>
+                        <div class="bar-chart-item">
+                            <div class="bar-chart-label">2023</div>
+                            <div class="bar-chart-bar-container">
+                                <div class="bar-chart-bar" style="width: 100%;"></div>
+                            </div>
+                            <div class="bar-chart-value">9,457</div>
+                        </div>
+                        <div class="bar-chart-item">
+                            <div class="bar-chart-label">2024 Q1 only</div>
+                            <div class="bar-chart-bar-container">
+                                <div class="bar-chart-bar" style="width: 28%; background-color: #e74c3c;"></div>
+                            </div>
+                            <div class="bar-chart-value">2,682</div>
+                        </div>
+                    </div>
+                    <p class="stat-comparison"><small>Note: 2020-2021 figures were affected by COVID eviction bans. 2024 shows Q1 data only. Source: Ministry of Justice</small></p>
+                </div>
+                
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <h3>No-Fault Eviction Proceedings (Q1 2024)</h3>
+                        <div class="stat-value">7,863</div>
+                        <div class="stat-comparison trend-up">+15% compared to Q1 2023</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Households Evicted Since 2019 Promise to Ban</h3>
+                        <div class="stat-value">28,993</div>
+                        <div class="stat-comparison">Since government pledged to end Section 21</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Households Threatened with Homelessness</h3>
+                        <div class="stat-value">25,910</div>
+                        <div class="stat-comparison">Due to no-fault evictions in 2023</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Illegal Evictions in 2022</h3>
+                        <div class="stat-value">8,748</div>
+                        <div class="stat-comparison trend-up">+12% from previous year (7,778)</div>
+                    </div>
+                </div>
+                
+                <div class="card-header">
+                    <h2>Illegal Evictions</h2>
+                </div>
+                
+                <div class="highlight">
+                    <p>Despite <strong>8,748</strong> cases of illegal eviction reported in 2022, only <strong>26</strong> landlords were convicted - just <strong>0.3%</strong> of total cases.</p>
+                </div>
+                
+                <div class="flex-row">
+                    <div class="card-50">
+                        <h3>What is Illegal Eviction?</h3>
+                        <p>Illegal eviction involves forcefully removing tenants from their homes without a court order or legal reason. It often involves:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Changing locks</li>
+                            <li>Removing tenant possessions</li>
+                            <li>Threatening behavior</li>
+                            <li>Cutting off utilities</li>
+                            <li>Physical removal</li>
+                        </ul>
+                        <p style="margin-top: 10px;">Labour MP Karen Buck compared the practice to domestic abuse, stating that "illegal eviction often takes place out of sight, involving violence. It is the most brutal of robberies."</p>
+                    </div>
+                    
+                    <div class="card-50">
+                        <h3>Enforcement Issues</h3>
+                        <div style="margin-top: 15px;">
+                            <div class="bar-chart">
+                                <div class="bar-chart-item">
+                                    <div class="bar-chart-label">Illegal eviction cases (2022)</div>
+                                    <div class="bar-chart-bar-container">
+                                        <div class="bar-chart-bar" style="width: 100%;"></div>
+                                    </div>
+                                    <div class="bar-chart-value">8,748</div>
+                                </div>
+                                <div class="bar-chart-item">
+                                    <div class="bar-chart-label">Convicted landlords (2022)</div>
+                                    <div class="bar-chart-bar-container">
+                                        <div class="bar-chart-bar" style="width: 0.3%; background-color: #e74c3c;"></div>
+                                    </div>
+                                    <div class="bar-chart-value">26</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px;">Most London boroughs no longer employ staff to deal with illegal evictions, hampering enforcement efforts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- HOUSING CONDITIONS TAB -->
+        <div id="housing-conditions" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Disrepair in Private Rented Housing</h2>
+                </div>
+                
+                <div class="highlight">
+                    <p>Private renters who complained to their landlord or local council about repairs were <strong>2.5 times</strong> (159%) more likely to be handed an eviction notice than those who had not complained.</p>
+                </div>
+                
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <h3>Renters Experiencing Disrepair</h3>
+                        <div class="stat-value">76%</div>
+                        <div class="stat-comparison">Over 6.2 million people in the last year</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Damp and Mould Issues</h3>
+                        <div class="stat-value">51%</div>
+                        <div class="stat-comparison">4.15 million private renters affected</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Heating/Hot Water Problems</h3>
+                        <div class="stat-value">31%</div>
+                        <div class="stat-comparison">2.54 million private renters affected</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Safety Equipment Issues</h3>
+                        <div class="stat-value">18%</div>
+                        <div class="stat-comparison">1.47 million with electrical hazards or faulty alarms</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>The Disrepair Catch-22</h3>
+                    <div style="display: flex; margin-top: 20px; flex-wrap: wrap; gap: 20px;">
+                        <div style="flex: 1; min-width: 300px;">
+                            <div class="bar-chart">
+                                <div class="bar-chart-item">
+                                    <div class="bar-chart-label">Renters who complained and received eviction notice</div>
+                                    <div class="bar-chart-bar-container">
+                                        <div class="bar-chart-bar" style="width: 21%; background-color: #e74c3c;"></div>
+                                    </div>
+                                    <div class="bar-chart-value">21%</div>
+                                </div>
+                                <div class="bar-chart-item">
+                                    <div class="bar-chart-label">Renters who didn't complain but received eviction notice</div>
+                                    <div class="bar-chart-bar-container">
+                                        <div class="bar-chart-bar" style="width: 8%;"></div>
+                                    </div>
+                                    <div class="bar-chart-value">8%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="flex: 1; min-width: 300px;">
+                            <p><strong>25% of private renters</strong> (over 2 million people) have not asked for repairs to be carried out for fear of eviction.</p>
+                            <p style="margin-top: 10px;">"By dragging its heels on the Renters Reform Bill, the government has left private renters in a terrible catch-22 – they either shut up and put up with disrepair, or risk more than doubling their chances of eviction in a cost of living crisis." - Polly Neate, CEO of Shelter</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-header">
+                    <h2>Case Study: The Human Cost</h2>
+                </div>
+                
+                <div style="padding: 20px; background-color: #f8f9fa; border-radius: 8px; margin-bottom: 20px;">
+                    <p><em>"Last Christmas Eve we received a 25% increase in rent, despite living with long-term damp and mould. I complained, and in the New Year the landlord responded with a section 21 eviction notice, saying they didn't accept any responsibility for the disrepair or damage."</em></p>
+                    <p style="margin-top: 15px;"><em>"Even before the section 21, we'd spend a lot of time at the library, church, or cafes, just so we didn't have to worry about [our daughter] being in the damp and cold. I was up all night looking online for properties, but it's really hard out there. Rents have massively gone up. People are so desperate they'll consider taking a flat that's mouldy or in disrepair just because there's nothing else."</em></p>
+                    <p style="margin-top: 15px; text-align: right;"><strong>- Chiara, 33, teacher and mother</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SMOKING TAB -->
+        <div id="smoking" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Smoking in Housing</h2>
+                </div>
+                
+                <div class="highlight">
+                    <p>Government data suggests that <strong>almost 54%</strong> of the UK's remaining smokers are tenants, with smoking particularly prevalent in social housing.</p>
+                </div>
+                
+                <div class="flex-row">
+                    <div class="card-50">
+                        <h3>Smoking Prevalence by Housing Type (2015-2020)</h3>
+                        <div style="margin-top: 20px;">
+                            <div class="bar-chart">
+                                <div class="bar-chart-item">
+                                    <div class="bar-chart-label">Social Housing Residents</div>
+                                    <div class="bar-chart-bar-container">
+                                        <div class="bar-chart-bar" style="width: 34%;"></div>
+                                    </div>
+                                    <div class="bar-chart-value">34%</div>
+                                </div>
+                                <div class="bar-chart-item">
+                                    <div class="bar-chart-label">Other Housing Types</div>
+                                    <div class="bar-chart-bar-container">
+                                        <div class="bar-chart-bar" style="width: 15%; background-color: #2ecc71;"></div>
+                                    </div>
+                                    <div class="bar-chart-value">15%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px;">Adults in social housing were more than twice as likely to be smokers compared to those in other housing types.</p>
+                    </div>
+                    
+                    <div class="card-50">
+                        <h3>Change in Smoking Prevalence (2015-2020)</h3>
+                        <div style="margin-top: 20px;">
+                            <div class="bar-chart">
+                                <div class="bar-chart-item">
+                                    <div class="bar-chart-label">Social Housing (2015)</div>
+                                    <div class="bar-chart-bar-container">
+                                        <div class="bar-chart-bar" style="width: 35.3%;"></div>
+                                    </div>
+                                    <div class="bar-chart-value">35.3%</div>
+                                </div>
+                                <div class="bar-chart-item">
+                                    <div class="bar-chart-label">Social Housing (2020)</div>
+                                    <div class="bar-chart-bar-container">
+                                        <div class="bar-chart-bar" style="width: 32.7%;"></div>
+                                    </div>
+                                    <div class="bar-chart-value">32.7%</div>
+                                </div>
+                                <div class="bar-chart-item">
+                                    <div class="bar-chart-label">Other Housing (2015)</div>
+                                    <div class="bar-chart-bar-container">
+                                        <div class="bar-chart-bar" style="width: 16%; background-color: #2ecc71;"></div>
+                                    </div>
+                                    <div class="bar-chart-value">16.0%</div>
+                                </div>
+                                <div class="bar-chart-item">
+                                    <div class="bar-chart-label">Other Housing (2020)</div>
+                                    <div class="bar-chart-bar-container">
+                                        <div class="bar-chart-bar" style="width: 12.1%; background-color: #2ecc71;"></div>
+                                    </div>
+                                    <div class="bar-chart-value">12.1%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px;">Smoking declined by only 7% in social housing compared to 24% in other housing types over this period.</p>
+                    </div>
+                </div>
+                
+                <div class="card-header" style="margin-top: 20px;">
+                    <h2>Smoking Cessation Patterns</h2>
+                </div>
+                
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <h3>Higher Addiction Levels</h3>
+                        <div class="stat-value">+50%</div>
+                        <div class="stat-comparison">Social housing smokers more likely to smoke within 30 min of waking</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Quit Attempts</h3>
+                        <div class="stat-value">+16%</div>
+                        <div class="stat-comparison">Higher odds of having made a serious quit attempt in social housing</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Use of Cessation Support</h3>
+                        <div class="stat-value">+22%</div>
+                        <div class="stat-comparison">Higher odds of using evidence-based cessation support</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Quit Success</h3>
+                        <div class="stat-value">-37%</div>
+                        <div class="stat-comparison trend-down">Lower odds of remaining abstinent after a quit attempt</div>
+                    </div>
+                </div>
+                
+                <div class="card-header" style="margin-top: 20px;">
+                    <h2>Landlord Approaches to Smoking</h2>
+                </div>
+                
+                <div class="flex-row">
+                    <div class="card-50">
+                        <h3>Legal Regulation</h3>
+                        <ul style="margin-left: 20px; margin-top: 15px;">
+                            <li>Landlords can advertise for non-smoking tenants</li>
+                            <li>Tenancy agreements can include no-smoking clauses</li>
+                            <li>HMO shared areas are covered by Smoke Free Law of 2017</li>
+                            <li>Insurance policies may be voided if set for non-smoking tenants</li>
+                        </ul>
+                        <p style="margin-top: 15px;">Smoking can devalue property as nicotine and chemicals build up in walls, floors, surfaces and furniture, in addition to being a major fire risk.</p>
+                    </div>
+                    
+                    <div class="card-50">
+                        <h3>Recommended Approaches</h3>
+                        <ul style="margin-left: 20px; margin-top: 15px;">
+                            <li>Flag smoking issues with tenants directly</li>
+                            <li>Verify insurance coverage</li>
+                            <li>Potential for larger deposit to cover refurbishment</li>
+                            <li>Rent adjustments after fixed term to compensate for damage</li>
+                        </ul>
+                        <p style="margin-top: 15px;">Attempting to evict specifically for smoking carries legal uncertainty and is not generally recommended as a first response.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- HARASSMENT TAB -->
+        <div id="harassment" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Landlord Harassment</h2>
+                </div>
+                
+                <div class="highlight">
+                    <p>Landlord harassment is an ongoing, aggressive behavior carried out by landlords to pressure or intimidate tenants, often to vacate properties without formal eviction procedures.</p>
+                </div>
+                
+                <div class="flex-row">
+                    <div class="card-50">
+                        <h3>What Constitutes Harassment?</h3>
+                        <ul style="margin-left: 20px; margin-top: 15px;">
+                            <li>Unnecessary rent increases</li>
+                            <li>Deliberately failing to maintain the property</li>
+                            <li>Refusing to accept rent payments</li>
+                            <li>Cutting off utilities</li>
+                            <li>Entering property without consent</li>
+                            <li>Changing locks</li>
+                            <li>Removing tenants' belongings</li>
+                            <li>Withholding security deposits</li>
+                            <li>Verbal or physical threats</li>
+                            <li>Creating persistent nuisance</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-50">
+                        <h3>What is NOT Considered Harassment</h3>
+                        <ul style="margin-left: 20px; margin-top: 15px;">
+                            <li>Failing to repair non-essential items (e.g., washing machine)</li>
+                            <li>Sending bill payments for tenant-caused damages</li>
+                            <li>Yearly rent increases without property upgrades</li>
+                            <li>Repairs or inspections with proper notice</li>
+                            <li>Emergency repairs without consent</li>
+                            <li>Installing security cameras</li>
+                            <li>Contacting about overdue rent payments</li>
+                            <li>Market-rate rent increases with proper notice</li>
+                            <li>Eviction for non-payment of rent</li>
+                            <li>Notifications about lease violations</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card-header" style="margin-top: 20px;">
+                    <h2>Legal Steps for Tenants</h2>
+                </div>
+                
+                <div class="flex-row">
+                    <div class="card-50">
+                        <h3>Immediate Actions</h3>
+                        <ol style="margin-left: 20px; margin-top: 15px;">
+                            <li><strong>Document everything</strong> - Keep accurate records with dates of all incidents</li>
+                            <li><strong>Gather evidence</strong> - Photos, videos, witness statements</li>
+                            <li><strong>Emergency police contact</strong> - For immediate threats or illegal entry</li>
+                            <li><strong>Seek legal advice</strong> - Contact housing solicitors or support organizations</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="card-50">
+                        <h3>Formal Procedures</h3>
+                        <ol style="margin-left: 20px; margin-top: 15px;">
+                            <li><strong>Lodge police complaint</strong> - Particularly for threats or illegal eviction</li>
+                            <li><strong>Legal representation</strong> - Essential for gathering evidence and building a case</li>
+                            <li><strong>Court petition</strong> - After professional assessment of case viability</li>
+                            <li><strong>Council intervention</strong> - Local authorities have powers to address harassment</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Scale of Illegal Landlord Practices</h3>
+                    <div style="margin-top: 20px;">
+                        <div class="bar-chart">
+                            <div class="bar-chart-item">
+                                <div class="bar-chart-label">Private renters experiencing illegal acts</div>
+                                <div class="bar-chart-bar-container">
+                                    <div class="bar-chart-bar" style="width: 45%; background-color: #e74c3c;"></div>
+                                </div>
+                                <div class="bar-chart-value">45%</div>
+                            </div>
+                            <div class="bar-chart-item">
+                                <div class="bar-chart-label">Afraid to report poor conditions</div>
+                                <div class="bar-chart-bar-container">
+                                    <div class="bar-chart-bar" style="width: 25%; background-color: #f39c12;"></div>
+                                </div>
+                                <div class="bar-chart-value">25%</div>
+                            </div>
+                            <div class="bar-chart-item">
+                                <div class="bar-chart-label">Living in dangerous conditions due to fear</div>
+                                <div class="bar-chart-bar-container">
+                                    <div class="bar-chart-bar" style="width: 33%; background-color: #e74c3c;"></div>
+                                </div>
+                                <div class="bar-chart-value">33%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LEGISLATION TAB -->
+        <div id="legislation" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Renters Reform Bill</h2>
+                </div>
+                
+                <div class="highlight">
+                    <p>The Renters Reform Bill is currently making its way through Parliament, but recent amendments have prompted criticism from housing charities.</p>
+                </div>
+                
+                <div class="flex-row">
+                    <div class="card-50">
+                        <h3>Original Promises</h3>
+                        <ul style="margin-left: 20px; margin-top: 15px;">
+                            <li>Complete abolition of Section 21 "no-fault" evictions</li>
+                            <li>Introduction of open-ended tenancies</li>
+                            <li>Stronger rights for tenants to challenge poor conditions</li>
+                            <li>Landlord property portal to improve compliance</li>
+                            <li>Strengthened possession grounds for landlords</li>
+                            <li>Faster court processes for legitimate evictions</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-50">
+                        <h3>Recent Amendments and Concerns</h3>
+                        <ul style="margin-left: 20px; margin-top: 15px;">
+                            <li>Implementation of Section 21 ban could be indefinitely delayed</li>
+                            <li>Reintroduction of some fixed-term tenancies</li>
+                            <li>Potential weakening of tenant protections</li>
+                            <li>Shelter and other organizations withdrew support after amendments</li>
+                            <li>Calls for House of Lords to strengthen the draft legislation</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card-header" style="margin-top: 20px;">
+                    <h2>Current and Proposed Solutions</h2>
+                </div>
+                
+                <div class="flex-row">
+                    <div class="card-50">
+                        <h3>Current Legal Framework</h3>
+                        <ul style="margin-left: 20px; margin-top: 15px;">
+                            <li><strong>Housing Act 1988</strong> - Established Section 21 evictions</li>
+                            <li><strong>Protection from Eviction Act 1977</strong> - Makes illegal eviction a criminal offense</li>
+                            <li><strong>Housing and Planning Act 2016</strong> - Introduced civil penalties up to £30,000</li>
+                            <li><strong>Smoke Free Law 2017</strong> - Prohibits smoking in enclosed shared spaces</li>
+                            <li><strong>Homes (Fitness for Human Habitation) Act 2018</strong> - Requires rental properties to be fit for habitation</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-50">
+                        <h3>Proposed Improvements</h3>
+                        <ul style="margin-left: 20px; margin-top: 15px;">
+                            <li>Complete ban on Section 21 evictions</li>
+                            <li>Longer notice periods for tenants</li>
+                            <li>Better council resources to enforce housing standards</li>
+                            <li>Landlord registry and licensing schemes</li>
+                            <li>Stronger penalties for illegal evictions and harassment</li>
+                            <li>Housing courts to speed up legitimate cases</li>
+                            <li>Uprating Housing Benefit in line with local rents</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight" style="margin-top: 20px;">
+                    <p><strong>Polly Neate, CEO of Shelter:</strong> "With the Bill now in the hands of the Lords, peers of all stripes must overhaul this threadbare legislation and deliver the change that renters desperately need. Without serious amends to give tenants greater protection from eviction after moving in and longer notice periods, renters' best hope of a stable home will be lost."</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="source-list">
+            <h3>Sources:</h3>
+            <p>Data compiled from: Shelter, Property118, Letting Agent Today, BMJ Open, SilverOak Solicitors, Joseph Rowntree Foundation, Inside Housing, Ministry of Justice, English Housing Survey, and YouGov research.</p>
+        </div>
+        
+        <div class="footer">
+            <p>UK Housing Crisis Dashboard | Data updated as of March 2025</p>
+        </div>
+    </div>
+    
+    <script>
+        function openTab(evt, tabName) {
+            // Hide all tab content
+            var tabcontent = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            
+            // Remove active class from all tabs
+            var tabs = document.getElementsByClassName("tab");
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            // Show the selected tab content and mark the button as active
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            // Animate the charts when the tab becomes visible
+            animateCharts();
+        }
+        
+        function animateCharts() {
+            // This function could be expanded to add animations
+            // For now, it's just a placeholder
+        }
+        
+        // Ensure the default tab is open on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            animateCharts();
+        });
+    </script>
+
+
+</body></html>
