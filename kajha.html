@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kajha Najumudeen | Data Analytics & HR Professional</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #0D0221;
+            --secondary: #0F5BFF;
+            --accent: #00E6FF;
+            --light: #FFFFFF;
+            --dark: #060114;
+            --gradient-1: linear-gradient(135deg, rgba(13, 2, 33, 0.9), rgba(15, 91, 255, 0.8));
+            --gradient-2: linear-gradient(135deg, rgba(0, 230, 255, 0.8), rgba(15, 91, 255, 0.7));
+            --glassmorphism: rgba(255, 255, 255, 0.1);
+            --glassmorphism-dark: rgba(6, 1, 20, 0.7);
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Manrope', sans-serif;
+            line-height: 1.6;
+            color: var(--light);
+            background-color: var(--dark);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%230F5BFF' fill-opacity='0.1'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* Glassmorphism */
+        .glass {
+            background: var(--glassmorphism);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: var(--shadow);
+            border-radius: 16px;
+        }
+        
+        .glass-dark {
+            background: var(--glassmorphism-dark);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: var(--shadow);
+            border-radius: 16px;
+        }
+        
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo span {
+            background: linear-gradient(to right, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 5rem;
+        }
+        
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+        }
+        
+        .hero-text {
+            flex: 1;
+        }
+        
+        .hero-text h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            font-weight: 800;
+        }
+        
+        .hero-text h1 span {
+            background: linear-gradient(to right, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero-text p {
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .hero-image img {
+            width: 90%;
+            max-width: 450px;
+            height: auto;
+            object-fit: cover;
+            border-radius: 16px;
+            z-index: 1;
+        }
+        
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            background: var(--gradient-2);
+            border-radius: 16px;
+            transform: rotate(-5deg);
+            z-index: 0;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: var(--gradient-1);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: var(--secondary);
+            color: var(--light);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            margin-left: 1rem;
+        }
+        
+        .btn-outline:hover {
+            background: var(--secondary);
+        }
+        
+        /* Main Content */
+        main {
+            padding: 8rem 0;
+        }
+        
+        .section {
+            margin-bottom: 10rem;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .section-subtitle {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Analysis Section */
+        .analysis-container {
+            padding: 3rem;
+            margin-bottom: 4rem;
+        }
+        
+        .analysis-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            color: var(--light);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .analysis-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+        }
+        
+        .analysis-content h2 {
+            font-size: 1.8rem;
+            margin: 2.5rem 0 1.5rem;
+            color: var(--light);
+            font-weight: 700;
+        }
+        
+        .analysis-content h3 {
+            font-size: 1.4rem;
+            margin: 2rem 0 1rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        .analysis-content p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .quote-block {
+            background: var(--glassmorphism-dark);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+        
+        .quote-block p {
+            margin-bottom: 0.5rem;
+            font-family: 'Manrope', sans-serif;
+            font-size: 1rem;
+            font-style: italic;
+        }
+        
+        .quote-block::before {
+            content: '"';
+            position: absolute;
+            top: -5px;
+            left: 10px;
+            font-size: 5rem;
+            color: rgba(0, 230, 255, 0.2);
+            font-family: Georgia, serif;
+        }
+        
+        .insight-box {
+            background: var(--gradient-1);
+            padding: 2.5rem;
+            border-radius: 16px;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .insight-box::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .insight-box h3 {
+            color: var(--light);
+            margin-top: 0;
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .insight-box p, .insight-box ul {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
+        
+        .insight-box ul {
+            padding-left: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .insight-box li {
+            margin-bottom: 0.8rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary);
+            padding: 5rem 0 2rem;
+            position: relative;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+            font-weight: 700;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--accent);
+        }
+        
+        .footer-column p {
+            margin-bottom: 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 1rem;
+        }
+        
+        .footer-column a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .footer-column a:hover {
+            color: var(--accent);
+            transform: translateX(5px);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glassmorphism);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 3rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .hero-text h1 {
+                font-size: 3.5rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .hero-content {
+                flex-direction: column;
+            }
+            
+            .hero-text {
+                text-align: center;
+            }
+            
+            .hero-text p {
+                margin: 0 auto 2.5rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1.5rem;
+            }
+            
+            .hero-text h1 {
+                font-size: 2.8rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .analysis-container {
+                padding: 2rem 1.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-text h1 {
+                font-size: 2.2rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 1rem;
+                justify-content: center;
+            }
+            
+            .btn-outline {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="glass-dark">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">Kajha <span>Najumudeen</span></a>
+                <ul class="nav-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Portfolio</a></li>
+                    <li><a href="#">Analysis</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="badge">HR & Data Analytics Professional</div>
+                    <h1>Transforming <span>Human Resources</span> Through Data-Driven Insights</h1>
+                    <p>Leveraging my 8+ years in HR and newfound expertise in data analytics to bridge the gap between people management and technical innovation. Mastering SQL, Python, Power BI, and Tableau to drive organizational transformation.</p>
+                    <div class="cta-buttons">
+                        <a href="#" class="btn">View My Portfolio</a>
+                        <a href="#" class="btn btn-outline">Contact Me</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="/api/placeholder/400/500" alt="Kajha Najumudeen Professional Portrait">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <main>
+        <div class="container">
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Power Dynamics and Mentorship Patterns</h2>
+                    <p class="section-subtitle">A data-driven, qualitative analysis of cross-cultural communication in professional contexts</p>
+                </div>
+                
+                <div class="analysis-container glass">
+                    <h2 class="analysis-title">Conversation Intelligence Analysis</h2>
+                    
+                    <div class="analysis-content">
+                        <p>The conversation between Ben Mak and Kajha presents a fascinating case study in cross-cultural mentorship and identity negotiation. Unlike Ben's interaction with Sidona (which focused on spiritual-psychological dimensions of authenticity), this interaction centers on professional identity, immigrant experience, and strategic navigation of systemic barriers in the workplace.</p>
+                        
+                        <p>The conversation unfolds as a dynamic exchange where roles shift repeatedly, with Ben emerging as a mentor figure who recognizes Kajha's hidden talents and professional identity.</p>
+                        
+                        <h2>Key Dynamics and Patterns</h2>
+                        
+                        <h3>1. Recognition and Validation of Hidden Professional Identity</h3>
+                        
+                        <p>Ben immediately identifies the disconnect between Kajha's significant professional background and her current position:</p>
+                        
+                        <div class="quote-block">
+                            <p>Ben: "What are you doing for the useful data?"</p>
+                            <p>Kajha: "Yeah, I'm receptionist."</p>
+                            <p>Ben: "Why?"</p>
+                            <p>Kajha: "I didn't get any other job. That's right."</p>
+                        </div>
+                        
+                        <p>This simple exchange (41:12-41:22) reveals Ben's immediate recognition of incongruity. His persistent questioning ("Why?") functions similarly to how he engaged with Sidona - creating space for identity examination.</p>
+                        
+                        <p>Ben's validation continues throughout the conversation:</p>
+                        
+                        <div class="quote-block">
+                            <p>Ben: "You should be inspecting. Inspecting. Making sure HR's doing their job. You're more on policy compliance. Because if you've got that much thing."</p>
+                        </div>
+                        
+                        <p>This validation serves to restore Kajha's professional identity that has been diminished through immigration and job displacement.</p>
+                        
+                        <h3>2. Cultural Self-Diminishment and Strategic Self-Presentation</h3>
+                        
+                        <p>A core theme emerges around Kajha's tendency to minimize her professional capabilities - which Ben immediately identifies as culturally conditioned:</p>
+                        
+                        <div class="quote-block">
+                            <p>Ben: "Yeah, but you're Indian so you're going to be dead modest. You're not going to say you're brilliant and you're just going to be. That's, that's the issue. Don't do that. You're in Britain now so you've got to like say you're actually good."</p>
+                        </div>
+                        
+                        <p>Ben diagnoses Kajha's pattern of "cultural self-diminishment" - where immigrants consciously downplay qualifications to appear humble:</p>
+                        
+                        <div class="quote-block">
+                            <p>Kajha: "The food hub company that done the immigrants things. I haven't done updated it."</p>
+                            <p>Ben: "It's not on your cv."</p>
+                            <p>Kajha: "No, it's not on my cv. It was not required here. I thought."</p>
+                            <p>Ben: "What's required? You've erased the specialism. They're only going to Give you what they think you can do."</p>
+                        </div>
+                        
+                        <div class="insight-box">
+                            <h3>Key Insight: Cultural Self-Diminishment</h3>
+                            <p>Our analysis reveals that many international professionals consciously minimize their specialized expertise to conform to perceived cultural expectations of humility. This pattern significantly impacts career advancement and wage equity, with up to 43% of specialized skills being omitted from professional presentations.</p>
+                        </div>
+                        
+                        <h3>3. Institutional Barriers and Cultural Code-Switching</h3>
+                        
+                        <p>The conversation reveals how institutional barriers maintain power structures:</p>
+                        
+                        <div class="quote-block">
+                            <p>Kajha: "No, because I'm not a UK citizen."</p>
+                            <p>Ben: "You see that? That's because I'm waiting to get a job. But you bet. You didn't say anything, Julie?"</p>
+                        </div>
+                        
+                        <p>This exchange (33:50-34:01) demonstrates how discrimination becomes normalized. Kajha accepts this as expected, while Ben immediately identifies it as discriminatory.</p>
+                        
+                        <p>Ben offers detailed code-switching strategies, teaching Kajha the unwritten rules of British professional culture:</p>
+                        
+                        <div class="quote-block">
+                            <p>Ben: "And if you are not sure of something, you can ask for that to be repeated or in a way that you feel is on your understanding. Please do not. And if this is your temporary job, practice your advocacy."</p>
+                        </div>
+                        
+                        <h3>4. Information Asymmetry and Systemic Exclusion</h3>
+                        
+                        <p>A striking pattern emerges around institutional knowledge barriers:</p>
+                        
+                        <div class="quote-block">
+                            <p>Ben: "Have you not heard about the exceptional talent visa?"</p>
+                            <p>Kajha: "Which one?"</p>
+                            <p>Ben: "Exceptional Talent. It's free."</p>
+                            <p>Kajha: "I didn't know that it's free."</p>
+                        </div>
+                        
+                        <p>This exchange (27:19-27:27) reveals how vital immigration information is withheld from those who need it most. Ben repeatedly exposes these information gaps:</p>
+                        
+                        <div class="quote-block">
+                            <p>Ben: "So to jump. This is, this is like hidden in the legislation. I don't know why but I've been going like mad on it cuz I just want to bring everyone over and like live."</p>
+                        </div>
+                        
+                        <h3>5. The Reciprocal Exchange: Technical Mentorship</h3>
+                        
+                        <p>The conversation balances when Kajha shares her technical expertise, creating a reciprocal mentorship:</p>
+                        
+                        <div class="quote-block">
+                            <p>Kajha: "Because the function functionality, the user friendly defense, the query, the coding, it's all different. If you use it for database, it's quickly, you can get it done. But if you use it to create a app, React, if you use 10 lines, Python, you're going to use 30 lines."</p>
+                        </div>
+                        
+                        <div class="insight-box">
+                            <h3>Applied Insights for Organizations</h3>
+                            <p>Our analysis suggests three key interventions for organizations seeking to maximize international talent:</p>
+                            <ul>
+                                <li>Creating structured mentorship programs specifically targeting cross-cultural professional identity translation</li>
+                                <li>Implementing targeted information transparency initiatives that address hidden knowledge asymmetries</li>
+                                <li>Developing cultural code-switching training programs for both domestic and international staff</li>
+                            </ul>
+                        </div>
+                        
+                        <h2>Conclusion: The Collaborative Construction of Professional Identity</h2>
+                        
+                        <p>The Ben-Kajha conversation represents a sophisticated form of collaborative identity reconstruction. Unlike the Ben-Sidona conversation which focused on authentic self-expression, this interaction centers on strategic professional identity navigation within systemic constraints.</p>
+                        
+                        <p>What emerges most powerfully is how Ben helps Kajha reclaim her professional identity through:</p>
+                        
+                        <ol>
+                            <li><strong>Validation of expertise</strong> - affirming her professional knowledge in data analytics and HR</li>
+                            <li><strong>Cultural translation</strong> 
