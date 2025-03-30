@@ -1,3 +1,328 @@
+</body>
+</html>
+// Configuration options for the website
+export default {
+    // Animation settings
+    animations: {
+        textRevealDuration: 0.9,
+        scrollSpeed: 0.7,
+        floatingSpeed: 1.8,
+        timelineStaggers: 0.25
+    },
+    
+    // Parallax effect settings
+    parallax: {
+        strength: 0.3,
+        smoothness: 0.4
+    },
+    
+    // Color scheme
+    colors: {
+        primary: '#3a7bd5',
+        secondary: '#00d2ff',
+        background: '#0c1523',
+        textLight: '#ffffff',
+        textDark: '#121520'
+    },
+    
+    // Glass effect settings
+    glass: {
+        blur: '15px',
+        backgroundColor: 'rgba(255, 255, 255, 0.03)',
+        border: 'rgba(255, 255, 255, 0.12)'
+    },
+    
+    // Contact form settings
+    contactForm: {
+        submitDelay: 1500,
+        resetDelay: 3000,
+        successMessage: 'Message Sent!',
+        successColor: 'linear-gradient(135deg, #4CAF50, #8BC34A)'
+    }
+};
+import config from './config.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Lazy load GSAP libraries
+    const loadGSAP = async () => {
+        const gsapModule = await import('https://cdn.jsdelivr.net/npm/gsap@3.12.2/+esm');
+        const ScrollTriggerModule = await import('https://cdn.jsdelivr.net/npm/gsap@3.12.2/ScrollTrigger.js');
+        const ScrollToPluginModule = await import('https://cdn.jsdelivr.net/npm/gsap@3.12.2/ScrollToPlugin.js');
+        
+        const gsap = gsapModule.default || gsapModule.gsap;
+        const ScrollTrigger = ScrollTriggerModule.default || ScrollTriggerModule.ScrollTrigger;
+        const ScrollToPlugin = ScrollToPluginModule.default || ScrollToPluginModule.ScrollToPlugin;
+        
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+        
+        return { gsap, ScrollTrigger };
+    };
+    
+    // Initialize basic functionality immediately
+    initBasicFunctionality();
+    
+    // Load GSAP and initialize animations later
+    loadGSAP().then(({ gsap, ScrollTrigger }) => {
+        initAnimations(gsap, ScrollTrigger);
+    });
+});
+
+// Basic functionality that doesn't require GSAP
+function initBasicFunctionality() {
+    // DOM Elements
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navMenu = document.querySelector('nav ul');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const forms = document.querySelectorAll('form');
+    
+    // Create page reveal element
+    const pageReveal = document.createElement('div');
+    pageReveal.className = 'page-reveal';
+    pageReveal.innerHTML = '<span class="initial-name"></span><span class="typing-cursor">|</span>';
+    document.body.appendChild(pageReveal);
+    
+    // Type out name animation
+    const initialName = document.querySelector('.initial-name');
+    const nameToType = "Kajha Najumudeen";
+    let charIndex = 0;
+    
+    setTimeout(() => {
+        const typeInterval = setInterval(() => {
+            if (charIndex < nameToType.length) {
+                initialName.style.opacity = 1;
+                initialName.textContent += nameToType.charAt(charIndex);
+                charIndex++;
+            } else {
+                clearInterval(typeInterval);
+                // Reveal the page after typing completes
+                setTimeout(() => {
+                    pageReveal.classList.add('hidden');
+                    document.querySelector('.hero-content').classList.add('revealed');
+                }, 1000);
+            }
+        }, 150);
+    }, 500);
+    
+    // Handle mobile menu toggle
+    menuToggle.addEventListener('click', () => {
+        menuToggle.classList.toggle('active');
+        navMenu.classList.toggle('active');
+        document.body.classList.toggle('menu-open');
+    });
+    
+    // Close mobile menu when link is clicked
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            menuToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+            document.body.classList.remove('menu-open');
+        });
+    });
+    
+    // Handle form submissions
+    forms.forEach(form => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Animated submit feedback
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+            
+            // Use configured delays for form feedback
+            setTimeout(() => {
+                submitButton.textContent = config.contactForm.successMessage;
+                submitButton.style.background = config.contactForm.successColor;
+                
+                form.reset();
+                
+                setTimeout(() => {
+                    submitButton.textContent = originalText;
+                    submitButton.style.background = '';
+                    submitButton.disabled = false;
+                }, config.contactForm.resetDelay);
+            }, config.contactForm.submitDelay);
+        });
+    });
+    
+    // Simple smooth scrolling
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                targetElement.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+}
+
+// Advanced animations with GSAP
+function initAnimations(gsap, ScrollTrigger) {
+    // Custom cursor functionality
+    const cursorElement = document.querySelector('.cursor');
+    if (cursorElement) {
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursorElement, {
+                x: e.clientX,
+                y: e.clientY,
+                duration: 0.1
+            });
+        });
+        
+        document.addEventListener('mousedown', () => {
+            gsap.to(cursorElement, { scale: 0.8, duration: 0.2 });
+        });
+        
+        document.addEventListener('mouseup', () => {
+            gsap.to(cursorElement, { scale: 1, duration: 0.2 });
+        });
+        
+        // Add cursor effects to interactive elements
+        const interactiveElements = document.querySelectorAll('a, button, input, textarea, .expertise-card');
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                gsap.to(cursorElement, { scale: 1.5, opacity: 0.7, duration: 0.3 });
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                gsap.to(cursorElement, { scale: 1, opacity: 1, duration: 0.3 });
+            });
+        });
+    }
+    
+    // Header scroll effect
+    const header = document.querySelector('header');
+    if (header) {
+        ScrollTrigger.create({
+            start: 'top -80',
+            onUpdate: (self) => {
+                if (self.direction === 1) {
+                    header.classList.add('scrolled');
+                } else if (self.direction === -1 && self.scroller.scrollTop < 100) {
+                    header.classList.remove('scrolled');
+                }
+            }
+        });
+    }
+    
+    // Setup text reveal animations
+    const revealElements = document.querySelectorAll('.reveal-text');
+    revealElements.forEach(element => {
+        ScrollTrigger.create({
+            trigger: element,
+            start: 'top 80%',
+            onEnter: () => element.classList.add('active')
+        });
+    });
+    
+    // Setup timeline animations
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    timelineItems.forEach((item, index) => {
+        ScrollTrigger.create({
+            trigger: item,
+            start: 'top 85%',
+            onEnter: () => {
+                gsap.to(item, {
+                    opacity: 1,
+                    y: 0,
+                    duration: config.animations.textRevealDuration,
+                    delay: index * config.animations.timelineStaggers,
+                    ease: 'power3.out'
+                });
+            }
+        });
+    });
+    
+    // Power elements animation
+    const expertiseCards = document.querySelectorAll('.expertise-card');
+    expertiseCards.forEach(card => {
+        gsap.from(card, {
+            duration: 1,
+            opacity: 0,
+            y: 50,
+            scale: 0.9,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: card,
+                start: "top 85%"
+            }
+        });
+        
+        // Add pulsing effect to expertise icons
+        const icon = card.querySelector('.expertise-icon svg');
+        gsap.to(icon, {
+            duration: 2,
+            scale: 1.1,
+            opacity: 0.8,
+            ease: "sine.inOut",
+            repeat: -1,
+            yoyo: true
+        });
+    });
+    
+    // Animate floating elements
+    const floatingElements = document.querySelectorAll('.floating-element');
+    floatingElements.forEach(element => {
+        const speed = element.dataset.speed || 1;
+        
+        gsap.to(element, {
+            x: `random(-100, 100)`,
+            y: `random(-100, 100)`,
+            duration: 20 * speed * config.animations.floatingSpeed,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+    });
+    
+    // Enhanced parallax effects with more dramatic movements
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+        const parallaxElements = section.querySelectorAll('.glass-card');
+        
+        parallaxElements.forEach(element => {
+            gsap.to(element, {
+                y: -100 * config.parallax.strength,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: config.parallax.smoothness
+                }
+            });
+        });
+    });
+    
+    // Initialize hero section animations with typewriter effect
+    // Remove old typewriter code since we now have entrance animation
+    gsap.to('.hero-content h2, .hero-content p', {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.2,
+        ease: 'power3.out',
+        delay: 0.5
+    });
+    
+    // Animate the floating elements with more energy
+    gsap.from('.floating-element', {
+        opacity: 0,
+        scale: 0,
+        stagger: 0.15,
+        duration: 1.2,
+        ease: 'back.out(2.5)',
+        delay: 0.8
+    });
+}
 /* Animation keyframes */
 @keyframes gradientShift {
     0% { background-position: 0% 50%; }
@@ -940,328 +1265,3 @@ nav ul li {
     </footer>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module" src="script.js"></script>
-</body>
-</html>
-// Configuration options for the website
-export default {
-    // Animation settings
-    animations: {
-        textRevealDuration: 0.9,
-        scrollSpeed: 0.7,
-        floatingSpeed: 1.8,
-        timelineStaggers: 0.25
-    },
-    
-    // Parallax effect settings
-    parallax: {
-        strength: 0.3,
-        smoothness: 0.4
-    },
-    
-    // Color scheme
-    colors: {
-        primary: '#3a7bd5',
-        secondary: '#00d2ff',
-        background: '#0c1523',
-        textLight: '#ffffff',
-        textDark: '#121520'
-    },
-    
-    // Glass effect settings
-    glass: {
-        blur: '15px',
-        backgroundColor: 'rgba(255, 255, 255, 0.03)',
-        border: 'rgba(255, 255, 255, 0.12)'
-    },
-    
-    // Contact form settings
-    contactForm: {
-        submitDelay: 1500,
-        resetDelay: 3000,
-        successMessage: 'Message Sent!',
-        successColor: 'linear-gradient(135deg, #4CAF50, #8BC34A)'
-    }
-};
-import config from './config.js';
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Lazy load GSAP libraries
-    const loadGSAP = async () => {
-        const gsapModule = await import('https://cdn.jsdelivr.net/npm/gsap@3.12.2/+esm');
-        const ScrollTriggerModule = await import('https://cdn.jsdelivr.net/npm/gsap@3.12.2/ScrollTrigger.js');
-        const ScrollToPluginModule = await import('https://cdn.jsdelivr.net/npm/gsap@3.12.2/ScrollToPlugin.js');
-        
-        const gsap = gsapModule.default || gsapModule.gsap;
-        const ScrollTrigger = ScrollTriggerModule.default || ScrollTriggerModule.ScrollTrigger;
-        const ScrollToPlugin = ScrollToPluginModule.default || ScrollToPluginModule.ScrollToPlugin;
-        
-        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-        
-        return { gsap, ScrollTrigger };
-    };
-    
-    // Initialize basic functionality immediately
-    initBasicFunctionality();
-    
-    // Load GSAP and initialize animations later
-    loadGSAP().then(({ gsap, ScrollTrigger }) => {
-        initAnimations(gsap, ScrollTrigger);
-    });
-});
-
-// Basic functionality that doesn't require GSAP
-function initBasicFunctionality() {
-    // DOM Elements
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navMenu = document.querySelector('nav ul');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const forms = document.querySelectorAll('form');
-    
-    // Create page reveal element
-    const pageReveal = document.createElement('div');
-    pageReveal.className = 'page-reveal';
-    pageReveal.innerHTML = '<span class="initial-name"></span><span class="typing-cursor">|</span>';
-    document.body.appendChild(pageReveal);
-    
-    // Type out name animation
-    const initialName = document.querySelector('.initial-name');
-    const nameToType = "Kajha Najumudeen";
-    let charIndex = 0;
-    
-    setTimeout(() => {
-        const typeInterval = setInterval(() => {
-            if (charIndex < nameToType.length) {
-                initialName.style.opacity = 1;
-                initialName.textContent += nameToType.charAt(charIndex);
-                charIndex++;
-            } else {
-                clearInterval(typeInterval);
-                // Reveal the page after typing completes
-                setTimeout(() => {
-                    pageReveal.classList.add('hidden');
-                    document.querySelector('.hero-content').classList.add('revealed');
-                }, 1000);
-            }
-        }, 150);
-    }, 500);
-    
-    // Handle mobile menu toggle
-    menuToggle.addEventListener('click', () => {
-        menuToggle.classList.toggle('active');
-        navMenu.classList.toggle('active');
-        document.body.classList.toggle('menu-open');
-    });
-    
-    // Close mobile menu when link is clicked
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            menuToggle.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.classList.remove('menu-open');
-        });
-    });
-    
-    // Handle form submissions
-    forms.forEach(form => {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Animated submit feedback
-            const submitButton = form.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            
-            submitButton.disabled = true;
-            submitButton.textContent = 'Sending...';
-            
-            // Use configured delays for form feedback
-            setTimeout(() => {
-                submitButton.textContent = config.contactForm.successMessage;
-                submitButton.style.background = config.contactForm.successColor;
-                
-                form.reset();
-                
-                setTimeout(() => {
-                    submitButton.textContent = originalText;
-                    submitButton.style.background = '';
-                    submitButton.disabled = false;
-                }, config.contactForm.resetDelay);
-            }, config.contactForm.submitDelay);
-        });
-    });
-    
-    // Simple smooth scrolling
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = link.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                targetElement.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-}
-
-// Advanced animations with GSAP
-function initAnimations(gsap, ScrollTrigger) {
-    // Custom cursor functionality
-    const cursorElement = document.querySelector('.cursor');
-    if (cursorElement) {
-        document.addEventListener('mousemove', (e) => {
-            gsap.to(cursorElement, {
-                x: e.clientX,
-                y: e.clientY,
-                duration: 0.1
-            });
-        });
-        
-        document.addEventListener('mousedown', () => {
-            gsap.to(cursorElement, { scale: 0.8, duration: 0.2 });
-        });
-        
-        document.addEventListener('mouseup', () => {
-            gsap.to(cursorElement, { scale: 1, duration: 0.2 });
-        });
-        
-        // Add cursor effects to interactive elements
-        const interactiveElements = document.querySelectorAll('a, button, input, textarea, .expertise-card');
-        interactiveElements.forEach(element => {
-            element.addEventListener('mouseenter', () => {
-                gsap.to(cursorElement, { scale: 1.5, opacity: 0.7, duration: 0.3 });
-            });
-            
-            element.addEventListener('mouseleave', () => {
-                gsap.to(cursorElement, { scale: 1, opacity: 1, duration: 0.3 });
-            });
-        });
-    }
-    
-    // Header scroll effect
-    const header = document.querySelector('header');
-    if (header) {
-        ScrollTrigger.create({
-            start: 'top -80',
-            onUpdate: (self) => {
-                if (self.direction === 1) {
-                    header.classList.add('scrolled');
-                } else if (self.direction === -1 && self.scroller.scrollTop < 100) {
-                    header.classList.remove('scrolled');
-                }
-            }
-        });
-    }
-    
-    // Setup text reveal animations
-    const revealElements = document.querySelectorAll('.reveal-text');
-    revealElements.forEach(element => {
-        ScrollTrigger.create({
-            trigger: element,
-            start: 'top 80%',
-            onEnter: () => element.classList.add('active')
-        });
-    });
-    
-    // Setup timeline animations
-    const timelineItems = document.querySelectorAll('.timeline-item');
-    timelineItems.forEach((item, index) => {
-        ScrollTrigger.create({
-            trigger: item,
-            start: 'top 85%',
-            onEnter: () => {
-                gsap.to(item, {
-                    opacity: 1,
-                    y: 0,
-                    duration: config.animations.textRevealDuration,
-                    delay: index * config.animations.timelineStaggers,
-                    ease: 'power3.out'
-                });
-            }
-        });
-    });
-    
-    // Power elements animation
-    const expertiseCards = document.querySelectorAll('.expertise-card');
-    expertiseCards.forEach(card => {
-        gsap.from(card, {
-            duration: 1,
-            opacity: 0,
-            y: 50,
-            scale: 0.9,
-            ease: "power3.out",
-            scrollTrigger: {
-                trigger: card,
-                start: "top 85%"
-            }
-        });
-        
-        // Add pulsing effect to expertise icons
-        const icon = card.querySelector('.expertise-icon svg');
-        gsap.to(icon, {
-            duration: 2,
-            scale: 1.1,
-            opacity: 0.8,
-            ease: "sine.inOut",
-            repeat: -1,
-            yoyo: true
-        });
-    });
-    
-    // Animate floating elements
-    const floatingElements = document.querySelectorAll('.floating-element');
-    floatingElements.forEach(element => {
-        const speed = element.dataset.speed || 1;
-        
-        gsap.to(element, {
-            x: `random(-100, 100)`,
-            y: `random(-100, 100)`,
-            duration: 20 * speed * config.animations.floatingSpeed,
-            repeat: -1,
-            yoyo: true,
-            ease: 'sine.inOut'
-        });
-    });
-    
-    // Enhanced parallax effects with more dramatic movements
-    const sections = document.querySelectorAll('section');
-    sections.forEach(section => {
-        const parallaxElements = section.querySelectorAll('.glass-card');
-        
-        parallaxElements.forEach(element => {
-            gsap.to(element, {
-                y: -100 * config.parallax.strength,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: section,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: config.parallax.smoothness
-                }
-            });
-        });
-    });
-    
-    // Initialize hero section animations with typewriter effect
-    // Remove old typewriter code since we now have entrance animation
-    gsap.to('.hero-content h2, .hero-content p', {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.2,
-        ease: 'power3.out',
-        delay: 0.5
-    });
-    
-    // Animate the floating elements with more energy
-    gsap.from('.floating-element', {
-        opacity: 0,
-        scale: 0,
-        stagger: 0.15,
-        duration: 1.2,
-        ease: 'back.out(2.5)',
-        delay: 0.8
-    });
-}
